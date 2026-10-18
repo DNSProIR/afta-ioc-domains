@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Fetch latest AFTA domain list
         run: bash scripts/update_domains.sh
@@ -29,12 +29,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet -- data/AFTA_IOC_DOMAINs.txt data/metadata.json; then
+          # Stage first so newly created (previously untracked) data files are detected
+          git add data/AFTA_IOC_DOMAINs.txt data/metadata.json
+
+          if git diff --cached --quiet; then
             echo "No update — list unchanged."
             exit 0
           fi
 
           LIST_DATE="$(python3 -c 'import json; print(json.load(open("data/metadata.json"))["list_date"])')"
-          git add data/AFTA_IOC_DOMAINs.txt data/metadata.json
           git commit -m "Update IOC domain list (${LIST_DATE})"
           git push
+          echo "Committed and pushed update for ${LIST_DATE}."
