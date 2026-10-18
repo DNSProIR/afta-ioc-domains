@@ -1,0 +1,40 @@
+name: Update IOC domains
+
+on:
+  schedule:
+    # Daily at 06:00 UTC
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-ioc-domains
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch latest AFTA domain list
+        run: bash scripts/update_domains.sh
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- data/AFTA_IOC_DOMAINs.txt data/metadata.json; then
+            echo "No update — list unchanged."
+            exit 0
+          fi
+
+          LIST_DATE="$(python3 -c 'import json; print(json.load(open("data/metadata.json"))["list_date"])')"
+          git add data/AFTA_IOC_DOMAINs.txt data/metadata.json
+          git commit -m "Update IOC domain list (${LIST_DATE})"
+          git push
