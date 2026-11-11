@@ -1,8 +1,8 @@
 {
   "source": "https://serverapi.ir/aftadomain.php",
   "upstream": "https://afta.gov.ir/uploads/DOMAIN/AFTA_IOC_DOMAINs.txt",
-  "fetched_at": "2026-11-10T15:41:19Z",
-  "list_date": "2026-11-10",
-  "last_modified": "Tue, 10 Nov 2026 08:35:16 GMT",
+  "fetched_at": "2026-11-11T15:28:49Z",
+  "list_date": "2026-11-11",
+  "last_modified": "Wed, 11 Nov 2026 06:18:37 GMT",
   "domain_count": 21112
 }
